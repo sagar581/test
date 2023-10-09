@@ -1,3 +1,5 @@
+import io.grpc.internal.SharedResourceHolder.release
+
 plugins {
     id("com.android.library")
     id("org.jetbrains.kotlin.android")
@@ -7,6 +9,13 @@ plugins {
 android {
     namespace = "com.example.library"
     compileSdk = 34
+
+    publishing {
+        singleVariant("release") {
+            withSourcesJar()
+            withJavadocJar()
+        }
+    }
 
     defaultConfig {
         minSdk = 24
@@ -42,4 +51,18 @@ dependencies {
     testImplementation("junit:junit:4.13.2")
     androidTestImplementation("androidx.test.ext:junit:1.1.5")
     androidTestImplementation("androidx.test.espresso:espresso-core:3.5.1")
+}
+
+publishing {
+    publications {
+        register<MavenPublication>("release") {
+            groupId = "com.github.sagar581"
+            artifactId = "test"
+            version = "0.0.3"
+
+            afterEvaluate {
+                from(components["release"])
+            }
+        }
+    }
 }
